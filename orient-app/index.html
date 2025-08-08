@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>Orient — Alarm • Stopwatch • Timer • Weather</title>
+
+    <!-- Content Security Policy: allow only our app + weather endpoints -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://ipapi.co https://api.bigdatacloud.net; media-src 'self' data:; font-src 'self' data:;" />
+
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/icon.svg" />
+
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header" role="banner">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">⟲</span>
+        <h1 class="app-title">Orient</h1>
+      </div>
+      <div class="status">
+        <span id="orientationLabel" class="chip">Detecting…</span>
+        <button id="toggleMotionBtn" class="ghost-btn" aria-pressed="false" title="Enable motion effects">Motion</button>
+        <button id="audioTestBtn" class="ghost-btn" title="Test sound">Sound</button>
+      </div>
+    </header>
+
+    <main id="views" class="views" role="main">
+      <!-- Alarm (portrait-primary) -->
+      <section id="view-alarm" class="view hidden" aria-labelledby="alarmTitle">
+        <div class="view-header">
+          <h2 id="alarmTitle">Alarm Clock</h2>
+          <p class="view-subtitle">Portrait (upright)</p>
+        </div>
+        <div class="clock-display" aria-live="polite">
+          <span id="alarmNow" class="time-large">00:00:00</span>
+        </div>
+        <form id="alarmForm" class="card form">
+          <label for="alarmTime" class="label">Set alarm time</label>
+          <input id="alarmTime" class="input" type="time" step="1" required />
+          <div class="row">
+            <button type="submit" class="btn primary" id="setAlarmBtn">Set Alarm</button>
+            <button type="button" class="btn" id="clearAlarmBtn">Clear</button>
+          </div>
+          <p id="alarmStatus" class="muted">No alarm set.</p>
+        </form>
+      </section>
+
+      <!-- Stopwatch (landscape-primary) -->
+      <section id="view-stopwatch" class="view hidden" aria-labelledby="stopwatchTitle">
+        <div class="view-header">
+          <h2 id="stopwatchTitle">Stopwatch</h2>
+          <p class="view-subtitle">Landscape (primary)</p>
+        </div>
+        <div class="clock-display" aria-live="polite">
+          <span id="swTime" class="time-large">00:00.00</span>
+        </div>
+        <div class="row nowrap center">
+          <button id="swStartStopBtn" class="btn primary">Start</button>
+          <button id="swLapBtn" class="btn" disabled>Lap</button>
+          <button id="swResetBtn" class="btn" disabled>Reset</button>
+        </div>
+        <ul id="swLaps" class="list" aria-label="Laps"></ul>
+      </section>
+
+      <!-- Timer (portrait-secondary) -->
+      <section id="view-timer" class="view hidden" aria-labelledby="timerTitle">
+        <div class="view-header">
+          <h2 id="timerTitle">Timer</h2>
+          <p class="view-subtitle">Portrait (upside down)</p>
+        </div>
+        <div class="timer-circle">
+          <svg viewBox="0 0 120 120" width="200" height="200" aria-hidden="true">
+            <circle cx="60" cy="60" r="54" class="ring-bg" />
+            <circle cx="60" cy="60" r="54" class="ring" id="timerRing" />
+          </svg>
+          <div class="timer-center">
+            <span id="timerRemaining" class="time-large">00:00</span>
+          </div>
+        </div>
+        <form id="timerForm" class="card form">
+          <div class="row">
+            <label class="label sr-only" for="timerMinutes">Minutes</label>
+            <input id="timerMinutes" class="input small" type="number" min="0" max="999" inputmode="numeric" placeholder="min" />
+            <label class="label sr-only" for="timerSeconds">Seconds</label>
+            <input id="timerSeconds" class="input small" type="number" min="0" max="59" inputmode="numeric" placeholder="sec" />
+          </div>
+          <div class="row nowrap center">
+            <button id="timerStartPauseBtn" type="button" class="btn primary">Start</button>
+            <button id="timerResetBtn" type="button" class="btn" disabled>Reset</button>
+            <div class="chip-row">
+              <button class="chip-btn" type="button" data-preset="30">+30s</button>
+              <button class="chip-btn" type="button" data-preset="60">+1m</button>
+              <button class="chip-btn" type="button" data-preset="300">+5m</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Weather (landscape-secondary) -->
+      <section id="view-weather" class="view hidden" aria-labelledby="weatherTitle">
+        <div class="view-header">
+          <h2 id="weatherTitle">Weather of the Day</h2>
+          <p class="view-subtitle">Landscape (secondary)</p>
+        </div>
+        <div class="card weather-card">
+          <div class="weather-top">
+            <div class="weather-icon" id="weatherIcon" aria-hidden="true">☀️</div>
+            <div class="weather-temp">
+              <div id="weatherTempNow" class="temp-now">--°</div>
+              <div class="temp-range"><span id="tempMax">--</span>/<span id="tempMin">--</span>°</div>
+            </div>
+          </div>
+          <div class="weather-meta">
+            <div id="weatherSummary" class="summary">Grant location permission to load weather.</div>
+            <div class="meta-row">
+              <span id="locationName">Locating…</span>
+              <span>•</span>
+              <span>Sunrise <strong id="sunrise">--:--</strong></span>
+              <span>•</span>
+              <span>Sunset <strong id="sunset">--:--</strong></span>
+            </div>
+          </div>
+          <div class="row">
+            <button id="getWeatherBtn" class="btn primary">Load Weather</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer" role="contentinfo">
+      <p class="muted">Rotate your device to switch between modes. Built for the “Prompt This Into Existence!” hackathon.</p>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <audio id="alarmAudio" preload="auto">
+      <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABYAaW5mbyBzb3VuZA==" type="audio/wav" />
+    </audio>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

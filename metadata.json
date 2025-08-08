@@ -1,8 +1,0 @@
-{
-  "name": "phone orientation webapp",
-  "description": "A mobile-friendly web application that detects the device's orientation and displays a specific feature for each of the four orientations: Alarm Clock, Stopwatch, Timer, and Weather.",
-  "requestFramePermissions": [
-    "geolocation"
-  ],
-  "prompt": ""
-}

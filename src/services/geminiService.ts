@@ -1,14 +1,16 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { WeatherData } from '../types';
 
 export const fetchWeather = async ({ lat, lon }: { lat: number, lon: number }): Promise<WeatherData> => {
   try {
-    // Per guidelines, API key must be from process.env.API_KEY.
-    // It is made available to the client via Vite's `define` config.
-    if (!process.env.API_KEY) {
-      throw new Error("API_KEY environment variable is not set. This should be configured in your build environment.");
+    // Access the API key from Vite's environment variables
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+
+    if (!apiKey) {
+      throw new Error("VITE_GEMINI_API_KEY is not set. Please create a .env.local file and add your API key.");
     }
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: apiKey });
 
     const prompt = `Provide the current weather and city name for the location at latitude ${lat} and longitude ${lon}.`;
 
@@ -53,7 +55,7 @@ export const fetchWeather = async ({ lat, lon }: { lat: number, lon: number }): 
   } catch (error) {
     console.error("Error fetching weather:", error);
     if (error instanceof Error && error.message.includes("API key")) {
-         throw new Error("The Gemini API key is invalid or missing. Check your environment variables.");
+         throw new Error("The Gemini API key is invalid or missing. Please check your .env.local file.");
     }
     if (error instanceof Error && error.message.includes("is not set")) {
         throw error;

@@ -1,0 +1,208 @@
+/* Poolside Theme */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Base & Background --- */
+@layer base {
+  body {
+    transition: background 0.8s ease-in-out;
+    background-size: 200% 200%;
+    animation: water-animation 25s ease infinite;
+    font-family: 'Inter', sans-serif;
+     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #1e293b; /* Default text color for light mode */
+  }
+  
+  /* Light Mode - Bright Pool */
+  body.light {
+    background: linear-gradient(-45deg, #a6c1ee, #fbc2eb, #80ced6, #7fdbff);
+  }
+
+  /* Dark Mode - Night Pool */
+  body.dark {
+    background: linear-gradient(-45deg, #003973, #007ea7, #231557, #44107a);
+    color: #e2e8f0; /* Default text color for dark mode */
+  }
+}
+
+/* --- Components --- */
+@layer components {
+    /* Glassmorphism Panel */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        width: 95vw;
+        height: 95vh;
+        max-width: 500px;
+        max-height: 800px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease-in-out;
+    }
+
+    .dark .glass-panel {
+        background: rgba(30, 30, 40, 0.45);
+    }
+    
+    /* Button Styles */
+    .btn {
+        font-weight: 500;
+        padding: 10px 24px;
+        border-radius: 9999px;
+        border: 1px solid transparent;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .btn:not(:disabled):active {
+        transform: scale(0.96);
+    }
+    
+    /* Primary Button */
+    .btn-primary {
+        background-color: #007ea7;
+        color: white;
+    }
+    .dark .btn-primary {
+        background-color: #80ced6;
+        color: #0d1a26;
+    }
+    .btn-primary:not(:disabled):hover {
+        background-color: #005f7e;
+    }
+    .dark .btn-primary:not(:disabled):hover {
+        background-color: #6dafb5;
+    }
+
+    /* Outline Button */
+    .btn-outline {
+        background-color: transparent;
+        color: #005f7e;
+        border-color: #007ea7;
+    }
+     .dark .btn-outline {
+        color: #80ced6;
+        border-color: #80ced6;
+    }
+    .btn-outline:not(:disabled):hover {
+        background-color: rgba(0, 126, 167, 0.1);
+    }
+    .dark .btn-outline:not(:disabled):hover {
+        background-color: rgba(128, 206, 214, 0.1);
+    }
+
+    /* Ghost Button (for icons) */
+    .btn-ghost {
+        padding: 8px;
+        border-radius: 50%;
+        background-color: transparent;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .btn-ghost:hover {
+        background-color: rgba(0, 0, 0, 0.08);
+    }
+    .dark .btn-ghost:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Input & Select Styles */
+    .form-input, .form-select {
+        font-family: 'Inter', sans-serif;
+        font-weight: 700;
+        text-align: center;
+        border: none;
+        outline: none;
+        padding: 10px;
+        background: transparent;
+        color: #1e293b;
+        border-bottom: 2px solid #94a3b8;
+        transition: border-color 0.2s ease-in-out;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    .dark .form-input, .dark .form-select {
+        color: #e2e8f0;
+        border-color: #475569;
+    }
+    .form-input:focus, .form-select:focus {
+        border-color: #007ea7;
+    }
+    .dark .form-input:focus, .dark .form-select:focus {
+        border-color: #80ced6;
+    }
+
+    .form-select {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 1.5em;
+        padding-right: 2.5rem;
+    }
+    .dark .form-select {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23cbd5e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    }
+     .form-select option {
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+    .dark .form-select option {
+        background-color: #1e293b;
+        color: #f1f5f9;
+    }
+}
+
+/* --- Animations --- */
+
+/* Background Water Animation */
+@keyframes water-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* View Transitions */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slide-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-20px) scale(0.98); }
+}
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out forwards;
+}
+.animate-slide-out {
+  animation: slide-out 0.5s ease-out forwards;
+}
+
+
+/* Timer complete ring */
+@keyframes ring-burst {
+  0% { transform: scale(0.5); opacity: 1; border-width: 4px;}
+  100% { transform: scale(2.5); opacity: 0; border-width: 1px;}
+}
+.timer-complete-ring {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid #007ea7;
+  animation: ring-burst 1.5s ease-out forwards;
+  pointer-events: none;
+}
+.dark .timer-complete-ring {
+    border-color: #80ced6;
+}
